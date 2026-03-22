@@ -210,7 +210,7 @@ def delete(id):
     db.execute("DELETE FROM masini WHERE id=?", (id,))
     db.commit()
     db.close()
-    return redirect("/")import os
+    return redirect("/")
 
 if __name__ == "__main__":
     init_db()
