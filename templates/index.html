@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<title>Fleet Control</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Segoe UI;
+    background:#f3f4f6;
+}
+
+.container{
+    width:95%;
+    margin:auto;
+}
+
+/* CARD */
+.card{
+    background:#e5e7eb;
+    padding:20px;
+    border-radius:8px;
+    margin-top:20px;
+}
+
+/* INPUT */
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:5px;
+    border:1px solid #ccc;
+}
+
+/* BUTTON */
+button{
+    padding:10px;
+    background:#1d4ed8;
+    color:white;
+    border:none;
+    border-radius:5px;
+    width:100%;
+}
+
+/* TABLE */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    background:#d1d5db;
+    padding:10px;
+    text-align:left;
+}
+
+td{
+    padding:10px;
+    background:white;
+}
+
+/* ROWS */
+tr{
+    border-bottom:2px solid #e5e7eb;
+}
+
+.red{
+    background:#fee2e2;
+}
+
+.orange{
+    background:#fef3c7;
+}
+
+/* BUTTONS */
+.btn-edit{
+    background:#16a34a;
+    color:white;
+    padding:5px;
+    display:block;
+    margin-bottom:5px;
+    text-align:center;
+    text-decoration:none;
+}
+
+.btn-delete{
+    background:#dc2626;
+    color:white;
+    padding:5px;
+    display:block;
+    text-align:center;
+    text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- STATUS -->
+<div class="card">
+<b style="color:red">🔴 {{rosu}} depășite</b><br>
+<b style="color:orange">🟠 {{portocaliu}} aproape</b><br>
+<b style="color:green">🟢 {{verde}} ok</b>
+</div>
+
+<!-- SEARCH -->
+<div class="card">
+<form method="POST">
+<input name="q" placeholder="Caută marcă, model, număr..." value="{{cautare}}">
+<button>Caută</button>
+</form>
+</div>
+
+<!-- ADD -->
+<div class="card">
+<form method="POST" action="/add">
+<input name="marca" placeholder="Marca">
+<input name="model" placeholder="Model">
+<input name="numar" placeholder="Număr auto">
+<input name="km" placeholder="KM">
+<input name="next_service" placeholder="Km până service">
+<input name="next_oil" placeholder="Km până ulei">
+<input name="observatii" placeholder="Observații">
+<button>Adaugă</button>
+</form>
+</div>
+
+<!-- TABLE -->
+<div class="card">
+
+<table>
+
+<tr>
+<th>Marca</th>
+<th>Model</th>
+<th>Număr</th>
+<th>KM</th>
+<th>Service la</th>
+<th>Ulei la</th>
+<th>Obs</th>
+<th>Acțiuni</th>
+</tr>
+
+{% for m in masini %}
+
+{% set km = m.km or 0 %}
+{% set red = (m.next_service and km>=m.next_service) or (m.next_oil and km>=m.next_oil) %}
+{% set orange = (m.next_service and (m.next_service-km)<=3000) or (m.next_oil and (m.next_oil-km)<=3000) %}
+
+<tr class="{% if red %}red{% elif orange %}orange{% endif %}">
+
+<td>{{m.marca}}</td>
+<td>{{m.model}}</td>
+<td>{{m.numar}}</td>
+<td>{{m.km}}</td>
+<td>{{m.next_service or "-"}}</td>
+<td>{{m.next_oil or "-"}}</td>
+<td>{{m.observatii or "-"}}</td>
+
+<td>
+<a class="btn-edit" href="/edit/{{m.id}}">Edit</a>
+<a class="btn-delete" href="/delete/{{m.id}}">Șterge</a>
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>
